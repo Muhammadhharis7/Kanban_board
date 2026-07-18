@@ -4,10 +4,11 @@ import { createCard, deleteCard, getAllCardsFromTheList, updateCard } from "../c
 const router = Router()
 
 // Create card & get all cards from the list
-router.route("/").post(createCard).get(getAllCardsFromTheList)
+router.route("/").post(createCard)
 
+router.route("/list/:listId").get(getAllCardsFromTheList)
 
 // Update card & delete card
-router.route("/:boardId").patch(updateCard).delete(deleteCard)
+router.route("/:cardId").patch(updateCard).delete(deleteCard)
 
 export default router

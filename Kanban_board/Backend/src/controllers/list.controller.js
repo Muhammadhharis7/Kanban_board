@@ -5,18 +5,18 @@ import {isValidObjectId} from "mongoose"
 import { List } from "../models/list.model.js"
 
 const createList = asyncHandler(async(req,res) => {
-    const {title,position} = req.body
+    const {title,position,board} = req.body
 
     if(!(title || position)){
         throw new ApiError(400,"title or position is missing")
     }
 
-    const dummyBoard = "64f3a2b1c8e4f5a6b7c8d9e2"
+    // const dummyBoard = "64f3a2b1c8e4f5a6b7c8d9e2"
 
     const list = await List.create({
         title,
         position,
-        board:dummyBoard
+        board
     })
 
     if(!list){
