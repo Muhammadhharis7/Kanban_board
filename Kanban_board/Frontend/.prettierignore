@@ -5,6 +5,9 @@ node_modules
 dist
 build
 
+# Vite cache
+.vite
+
 # Environment files
 .env
 .env.local
@@ -13,7 +16,7 @@ build
 *.log
 npm-debug.log*
 
-# Package manager files (auto-generated, shouldn't be reformatted)
+# Package manager files (auto-generated)
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
@@ -25,6 +28,6 @@ pnpm-lock.yaml
 .vscode
 .idea
 
-# Misc generated files
+# Misc
 coverage
 .DS_Store
