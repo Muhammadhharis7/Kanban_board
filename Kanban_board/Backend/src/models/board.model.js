@@ -5,6 +5,9 @@ const boardSchema = new Schema({
         type:String,
         required:true
     },
+    description:{
+        type:String
+    },
     owner:{
         type:Schema.Types.ObjectId,
         ref:"User"

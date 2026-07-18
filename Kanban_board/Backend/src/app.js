@@ -1,6 +1,6 @@
 import express from "express"
 import cors from "cors"
-import cookieParser from "cokie-parser"
+import cookieParser from "cookie-parser"
 
 const app = express()
 // Middleware setup
@@ -21,9 +21,9 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 // Rotes import
-import boardRouter from "../src/models/board.model.js"
-import listRouter from "../src/models/list.model.js"
-import cardRouter from "../src/models/card.model.js"
+import boardRouter from "../src/routes/board.route.js"
+import listRouter from "../src/routes/list.route.js"
+import cardRouter from "../src/routes/card.route.js"
 
 // Routes declaration
 app.use("/api/v1/boards",boardRouter)
