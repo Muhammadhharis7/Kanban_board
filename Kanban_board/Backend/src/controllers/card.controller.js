@@ -6,19 +6,19 @@ import { isValidObjectId } from "mongoose"
 
 
 const createCard = asyncHandler(async(req,res) => {
-    const {title,position,description} = req.body
+    const {title,position,description,list} = req.body
 
-    if(!(title || position)){
-        throw new ApiError(400,"title or position is missing")
+    if((!title || position === undefined || !list)){
+        throw new ApiError(400,"title,position or list is missing")
     }
 
-    const dummyList = "64f3a2b1c8e4f5a6b7c8d9e1"
+    // const dummyList = "64f3a2b1c8e4f5a6b7c8d9e1"
 
     const card = await Card.create({
         title,
         position,
         description,
-        list:dummyList
+        list:list
     })
 
     if(!card){
@@ -40,9 +40,9 @@ const getAllCardsFromTheList = asyncHandler(async(req,res) => {
 
     const allCards = await Card.find({list:listId})
 
-    if(!allCards){
-        throw new ApiError(404,"Cards not found")
-    }
+    // if(!allCards){
+    //     throw new ApiError(404,"Cards not found")
+    // }
     return res
     .status(200)
     .json(new ApiResponse(200,allCards,"All cards are fetched successfully"))

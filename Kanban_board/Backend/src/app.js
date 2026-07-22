@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser"
 const app = express()
 // Middleware setup
 app.use(cors({
-    origin:process.env.OCRS_ORIGIN,
+    origin:process.env.CORS_ORIGIN,
     credentials:true
 }))
 // Allows server to understands the incoming requests with a JSON body
@@ -29,6 +29,15 @@ import cardRouter from "../src/routes/card.route.js"
 app.use("/api/v1/boards",boardRouter)
 app.use("/api/v1/lists",listRouter)
 app.use("/api/v1/cards",cardRouter)
+
+// Global error handler - must be defined AFTER all routes
+app.use((err, req, res, next) => {
+    console.error("UNHANDLED ERROR:", err);
+    res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || "Internal Server Error",
+    });
+  });
 
 
 
