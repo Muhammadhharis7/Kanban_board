@@ -275,6 +275,220 @@
 // export { BoardPage };
 
 
+// import { useState, useEffect } from "react";
+// import axios from "axios";
+
+// function BoardPage() {
+//   const boardId = "6a5bd714f1307db0847cb8a7";
+
+//   const [board, setBoard] = useState(null);
+//   const [list, setLists] = useState([]);
+//   const [card, setCards] = useState([]);
+//   const [newListTitle, setNewListTitle] = useState("");
+//   const [newCardTitles, setNewCardTitles] = useState({});
+//   // Track which item is curently in edit mode
+//   const [editingListId,setEditingListId] = useState("")
+//   // Track the actual text being typed while editing
+//   const [editListTitle,setEditListTitle] = useState("")
+
+//   const [editingCardId,setEditingCardId] = useState("")
+
+//   const [editCardTitle,setEditCardTitle] = useState("")
+
+//   useEffect(() => {
+//     axios
+//       .get(`http://localhost:8000/api/v1/boards/${boardId}`)
+//       .then((response) => setBoard(response.data.data))
+//       .catch((err) =>
+//         console.log("Board fetch error:", err.response?.status, err.response?.data || err.message)
+//       );
+//   }, []);
+
+//   useEffect(() => {
+//     axios
+//       .get(`http://localhost:8000/api/v1/lists/board/${boardId}`)
+//       .then((response) => setLists(response.data.data))
+//       .catch((err) =>
+//         console.log("List fetch error:", err.response?.status, err.response?.data || err.message)
+//       );
+//   }, []);
+
+//   useEffect(() => {
+//     if (list.length === 0) return;
+
+//     const fetchAllCards = async () => {
+//       try {
+//         const requests = list.map((ls) =>
+//           axios.get(`http://localhost:8000/api/v1/cards/list/${ls._id}`)
+//         );
+//         const responses = await Promise.all(requests);
+//         const allCards = responses.flatMap((res) => res.data.data);
+//         setCards(allCards);
+//       } catch (err) {
+//         console.log("Card fetch error:", err.response?.status, err.response?.data || err.message);
+//       }
+//     };
+
+//     fetchAllCards();
+//   }, [list]);
+// // handling creating list
+//   const handleCreateList = () => {
+//     if (!newListTitle) return;
+
+//     axios
+//       .post("http://localhost:8000/api/v1/lists/", {
+//         title: newListTitle,
+//         position: list.length,
+//         board: boardId,
+//       })
+//       .then((response) => {
+//         setLists((prevLists) => [...prevLists, response.data.data]);
+//         setNewListTitle("");
+//       })
+//       .catch((err) =>
+//         console.log("Create list error:", err.response?.status, err.response?.data || err.message)
+//       );
+//   };
+// // handling creating card
+//   const handleCreateCard = (listId) => {
+//     const title = newCardTitles[listId];
+//     if (!title) return;
+
+//     axios
+//       .post("http://localhost:8000/api/v1/cards/", {
+//         title,
+//         position: card.filter((c) => c.list === listId).length,
+//         list: listId,
+//       })
+//       .then((response) => {
+//         setCards((prevCards) => [...prevCards, response.data.data]);
+//         setNewCardTitles((prev) => ({ ...prev, [listId]: "" }));
+//       })
+//       .catch((err) =>
+//         console.log("Create card error:", err.response?.status, err.response?.data || err.message)
+//       );
+//   };
+
+// // handling edit list
+//   const handleEditList = (editingListId) => {
+//     if(!editListTitle) return
+
+
+//     axios.patch(`http://localhost:8000/api/v1/lists/${editingListId}`,{
+//       title:editListTitle
+//     }).then((response) => {
+//       setLists((prevLists) => prevLists.map((ls) => ls._id === editingListId ? response.data.data : ls))
+//       setEditingListId(null)
+//       setEditListTitle("")
+//     }).catch((err) => console.log(`Edit list error : ${err.response?.status, err.response?.data || err.message}`))
+//   }
+
+
+// // handling edit card
+//   const handleEditCard = (editingCardId) => {
+//     if(!editCardTitle)return
+
+//     axios.patch(`http://localhost:8000/api/v1/cards/${editingCardId}`,{
+//       title: editCardTitle
+//     }).then((response) =>{ setCards((prevCards)=> prevCards.map((c) => c._id === editingCardId ? response.data.data : c))
+//       setEditingCardId(null)
+//       setEditCardTitle("")
+//     }).catch((err) => console.log(err.response?.status,err.response?.data || err.message))
+//   }
+
+//   return (
+//     // Parent element
+//     <div className="w-full min-h-screen bg-zinc-900 text-white p-8">
+//       {/* Board title */}
+//       <h1 className="text-2xl font-bold mb-6">
+//         {board ? board.title : "Loading..."}
+//       </h1>
+//       {/* Render List and card */}
+//       <div className="flex gap-4 items-start">
+//         {list.map((ls) => (
+//           <><div className="bg--zinc-700 rounded p-2 text-sm">
+//             {ls._id === editingListId ? (
+//               <><input type="text" name="" id="" placeholder="Edit the list title" onChange={(e) => setEditListTitle(e.target.value)} value={editListTitle} />
+//                 <button onClick={() => handleEditList(ls._id)} className="">Save</button></>
+//             ) : (
+//               <span onClick={() => {
+//                 setEditingListId(ls._id); setEditListTitle(ls.title);
+//               } }>{ls.title}</span>
+//             )}
+//           </div><div
+//             key={ls._id}
+//             className="bg-zinc-800 rounded-lg p-3 w-64 flex flex-col max-h-[80vh]"
+//           >
+//               <h3 className="font-semibold mb-3 shrink-0">{ls.title}</h3>
+
+//               <div className="flex-1 overflow-y-auto space-y-2 mb-2">
+//                 {card
+//                   .filter((c) => c.list === ls._id)
+//                   .map((c) => (
+//                     <><div className="bg-zinc-700 rounded p-2 text-sm">
+//                       {c._id === editingCardId ? (
+//                         <>
+//                           <input type="text" placeholder="Edit the card" onChange={(e) => setEditCardTitle(e.target.value)} value={editCardTitle} className="w-full p-1 rounded text-black text-sm mb-1" />
+//                           <button onClick={handleEditCard(c._id)} className="bg-blue-500 text-xs px-2 py-1 rounded ">Save</button>
+//                         </>
+//                       ) : (
+//                         <span onClick={() => {
+//                           setEditingCardId(c._id);
+//                           setEditCardTitle(c.title);
+//                         } }></span>
+//                       )}
+//                     </div><div
+//                       key={c._id}
+//                       className="bg-zinc-700 rounded p-2 text-sm break-words"
+//                     >
+//                         {c.title}
+//                       </div></>
+//                   ))}
+//               </div>
+//               {/* Add new cards */}
+//               <div className="shrink-0">
+//                 <input
+//                   type="text"
+//                   value={newCardTitles[ls._id] || ""}
+//                   onChange={(e) => setNewCardTitles((prev) => ({ ...prev, [ls._id]: e.target.value }))}
+//                   placeholder="New card title"
+//                   className="w-full p-2 rounded bg-zinc-700 text-white text-sm mb-2" />
+//                 <button
+//                   onClick={() => handleCreateCard(ls._id)}
+//                   className="bg-green-600 px-3 py-1 rounded text-sm w-full"
+//                 >
+//                   Add card
+//                 </button>
+//               </div>
+
+//               {/* Edit card */}
+//             </div></>
+//         ))}
+//         {/* Add new List */}
+//         <div className="bg-zinc-800 rounded-lg p-3 w-64 shrink-0">
+//           <input
+//             type="text"
+//             value={newListTitle}
+//             onChange={(e) => setNewListTitle(e.target.value)}
+//             placeholder="New list title"
+//             className="w-full p-2 rounded bg-zinc-700 text-white mb-2"
+//           />
+//           <button
+//             onClick={handleCreateList}
+//             className="bg-green-600 px-3 py-1 rounded w-full"
+//           >
+//             Add list
+//           </button>
+//         </div>
+//         {/* Edit list */}
+//       </div>
+//     </div>
+//   );
+// }
+
+// export { BoardPage };
+
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -286,74 +500,53 @@ function BoardPage() {
   const [card, setCards] = useState([]);
   const [newListTitle, setNewListTitle] = useState("");
   const [newCardTitles, setNewCardTitles] = useState({});
-  // Track which item is curently in edit mode
-  const [editingListId,setEditingListId] = useState("")
-  // Track the actual text being typed while editing
-  const [editListTitle,setEditListTitle] = useState("")
-
-  const [editingCardId,setEditingCardId] = useState("")
-
-  const [editCardTitle,setEditCardTitle] = useState("")
+  const [editingListId, setEditingListId] = useState(null);
+  const [editListTitle, setEditListTitle] = useState("");
+  const [editingCardId, setEditingCardId] = useState(null);
+  const [editCardTitle, setEditCardTitle] = useState("");
 
   useEffect(() => {
     axios
       .get(`http://localhost:8000/api/v1/boards/${boardId}`)
       .then((response) => setBoard(response.data.data))
-      .catch((err) =>
-        console.log("Board fetch error:", err.response?.status, err.response?.data || err.message)
-      );
+      .catch((err) => console.log("Board fetch error:", err.response?.status, err.response?.data || err.message));
   }, []);
 
   useEffect(() => {
     axios
       .get(`http://localhost:8000/api/v1/lists/board/${boardId}`)
       .then((response) => setLists(response.data.data))
-      .catch((err) =>
-        console.log("List fetch error:", err.response?.status, err.response?.data || err.message)
-      );
+      .catch((err) => console.log("List fetch error:", err.response?.status, err.response?.data || err.message));
   }, []);
 
   useEffect(() => {
     if (list.length === 0) return;
-
     const fetchAllCards = async () => {
       try {
-        const requests = list.map((ls) =>
-          axios.get(`http://localhost:8000/api/v1/cards/list/${ls._id}`)
-        );
+        const requests = list.map((ls) => axios.get(`http://localhost:8000/api/v1/cards/list/${ls._id}`));
         const responses = await Promise.all(requests);
-        const allCards = responses.flatMap((res) => res.data.data);
-        setCards(allCards);
+        setCards(responses.flatMap((res) => res.data.data));
       } catch (err) {
         console.log("Card fetch error:", err.response?.status, err.response?.data || err.message);
       }
     };
-
     fetchAllCards();
   }, [list]);
-// handling creating list
+
   const handleCreateList = () => {
     if (!newListTitle) return;
-
     axios
-      .post("http://localhost:8000/api/v1/lists/", {
-        title: newListTitle,
-        position: list.length,
-        board: boardId,
-      })
+      .post("http://localhost:8000/api/v1/lists/", { title: newListTitle, position: list.length, board: boardId })
       .then((response) => {
         setLists((prevLists) => [...prevLists, response.data.data]);
         setNewListTitle("");
       })
-      .catch((err) =>
-        console.log("Create list error:", err.response?.status, err.response?.data || err.message)
-      );
+      .catch((err) => console.log("Create list error:", err.response?.status, err.response?.data || err.message));
   };
-// handling creating card
+
   const handleCreateCard = (listId) => {
     const title = newCardTitles[listId];
     if (!title) return;
-
     axios
       .post("http://localhost:8000/api/v1/cards/", {
         title,
@@ -364,61 +557,96 @@ function BoardPage() {
         setCards((prevCards) => [...prevCards, response.data.data]);
         setNewCardTitles((prev) => ({ ...prev, [listId]: "" }));
       })
-      .catch((err) =>
-        console.log("Create card error:", err.response?.status, err.response?.data || err.message)
-      );
+      .catch((err) => console.log("Create card error:", err.response?.status, err.response?.data || err.message));
   };
 
-// handling edit list
-  const handleEditList = (editingListId) => {
-    if(!editListTitle) return
+  const handleEditList = (id) => {
+    if (!editListTitle) return;
+    axios
+      .patch(`http://localhost:8000/api/v1/lists/${id}`, { title: editListTitle })
+      .then((response) => {
+        setLists((prevLists) => prevLists.map((ls) => (ls._id === id ? response.data.data : ls)));
+        setEditingListId(null);
+        setEditListTitle("");
+      })
+      .catch((err) => console.log("Edit list error:", err.response?.status, err.response?.data || err.message));
+  };
 
-
-    axios.patch(`http://localhost:8000/api/v1/lists/${editingListId}`,{
-      title:editListTitle
-    }).then((response) => {
-      setLists((prevLists) => prevLists.map((ls) => ls._id === editingListId ? response.data.data : ls))
-      setEditingListId(null)
-      setEditListTitle("")
-    }).catch((err) => console.log(`Edit list error : ${err.response?.status, err.response?.data || err.message}`))
-  }
-
-
-// handling edit card
-  const handleEditCard = (editingCardId) => {
-    if(!editCardTitle)return
-
-    axios.patch(`http://localhost:8000/api/v1/cards/${editingCardId}`,{
-      title: editCardTitle
-    }).then((response) =>{ setCards((prevCards)=> prevCards.map((c) => c._id === editingCardId ? response.data.data : c))
-      setEditingCardId(null)
-      setEditCardTitle("")
-    }).catch((err) => console.log(err.response?.status,err.response?.data || err.message))
-  }
+  const handleEditCard = (id) => {
+    if (!editCardTitle) return;
+    axios
+      .patch(`http://localhost:8000/api/v1/cards/${id}`, { title: editCardTitle })
+      .then((response) => {
+        setCards((prevCards) => prevCards.map((c) => (c._id === id ? response.data.data : c)));
+        setEditingCardId(null);
+        setEditCardTitle("");
+      })
+      .catch((err) => console.log("Edit card error:", err.response?.status, err.response?.data || err.message));
+  };
 
   return (
     <div className="w-full min-h-screen bg-zinc-900 text-white p-8">
-      <h1 className="text-2xl font-bold mb-6">
-        {board ? board.title : "Loading..."}
-      </h1>
+      <h1 className="text-2xl font-bold mb-6">{board ? board.title : "Loading..."}</h1>
 
       <div className="flex gap-4 items-start">
         {list.map((ls) => (
-          <div
-            key={ls._id}
-            className="bg-zinc-800 rounded-lg p-3 w-64 flex flex-col max-h-[80vh]"
-          >
-            <h3 className="font-semibold mb-3 shrink-0">{ls.title}</h3>
+          <div key={ls._id} className="bg-zinc-800 rounded-lg p-3 w-64 flex flex-col max-h-[80vh]">
+            {/* List title — edit mode built directly in, no duplicate div */}
+            {ls._id === editingListId ? (
+              <div className="mb-3 shrink-0">
+                <input
+                  type="text"
+                  value={editListTitle}
+                  onChange={(e) => setEditListTitle(e.target.value)}
+                  className="w-full p-1 rounded text-black text-sm mb-1"
+                />
+                <button onClick={() => handleEditList(ls._id)} className="bg-blue-500 text-xs px-2 py-1 rounded">
+                  Save
+                </button>
+              </div>
+            ) : (
+              <h3
+                className="font-semibold mb-3 shrink-0 cursor-pointer"
+                onClick={() => {
+                  setEditingListId(ls._id);
+                  setEditListTitle(ls.title);
+                }}
+              >
+                {ls.title}
+              </h3>
+            )}
 
             <div className="flex-1 overflow-y-auto space-y-2 mb-2">
               {card
                 .filter((c) => c.list === ls._id)
                 .map((c) => (
-                  <div
-                    key={c._id}
-                    className="bg-zinc-700 rounded p-2 text-sm break-words"
-                  >
-                    {c.title}
+                  <div key={c._id} className="bg-zinc-700 rounded p-2 text-sm break-words">
+                    {c._id === editingCardId ? (
+                      <>
+                        <input
+                          type="text"
+                          value={editCardTitle}
+                          onChange={(e) => setEditCardTitle(e.target.value)}
+                          className="w-full p-1 rounded text-black text-sm mb-1"
+                        />
+                        <button
+                          onClick={() => handleEditCard(c._id)}
+                          className="bg-blue-500 text-xs px-2 py-1 rounded"
+                        >
+                          Save
+                        </button>
+                      </>
+                    ) : (
+                      <span
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setEditingCardId(c._id);
+                          setEditCardTitle(c.title);
+                        }}
+                      >
+                        {c.title}
+                      </span>
+                    )}
                   </div>
                 ))}
             </div>
@@ -427,16 +655,11 @@ function BoardPage() {
               <input
                 type="text"
                 value={newCardTitles[ls._id] || ""}
-                onChange={(e) =>
-                  setNewCardTitles((prev) => ({ ...prev, [ls._id]: e.target.value }))
-                }
+                onChange={(e) => setNewCardTitles((prev) => ({ ...prev, [ls._id]: e.target.value }))}
                 placeholder="New card title"
                 className="w-full p-2 rounded bg-zinc-700 text-white text-sm mb-2"
               />
-              <button
-                onClick={() => handleCreateCard(ls._id)}
-                className="bg-green-600 px-3 py-1 rounded text-sm w-full"
-              >
+              <button onClick={() => handleCreateCard(ls._id)} className="bg-green-600 px-3 py-1 rounded text-sm w-full">
                 Add card
               </button>
             </div>
@@ -451,10 +674,7 @@ function BoardPage() {
             placeholder="New list title"
             className="w-full p-2 rounded bg-zinc-700 text-white mb-2"
           />
-          <button
-            onClick={handleCreateList}
-            className="bg-green-600 px-3 py-1 rounded w-full"
-          >
+          <button onClick={handleCreateList} className="bg-green-600 px-3 py-1 rounded w-full">
             Add list
           </button>
         </div>
