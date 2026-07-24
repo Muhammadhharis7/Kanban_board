@@ -38,7 +38,7 @@ const getAllCardsFromTheList = asyncHandler(async(req,res) => {
         throw new ApiError(400,"Invlaid card id")
     }
 
-    const allCards = await Card.find({list:listId})
+    const allCards = await Card.find({list:listId}).sort({position:1})
 
     // if(!allCards){
     //     throw new ApiError(404,"Cards not found")
