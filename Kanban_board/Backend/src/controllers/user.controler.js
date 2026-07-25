@@ -73,7 +73,8 @@ const registerUser = asyncHandler(async(req,res) => {
         email,
         fullName,
         password,
-        avatar:avatar.url
+        avatar:avatar.url,
+        avatarPublicId:avatar.public_id
     })
 
     const createdUser = await User.findById(user._id).select("-password -refreshToken")
@@ -256,7 +257,8 @@ const updateAvatarImage = asyncHandler(async(req,res) => {
         throw new ApiError(404,"User not found")
     }
 
-    const oldAvatar = oldImage.avatar
+    // const oldAvatar = oldImage.avatar
+    const oldAvatarPublicId = oldImage.avatarPublicId 
 
     const newAvatarImageLocalPath = req.files?.avatar?.[0]?.path
 
@@ -274,7 +276,8 @@ const updateAvatarImage = asyncHandler(async(req,res) => {
         req.user?._id,
         {
             $set: {
-                avatar:avatarImage.url
+                avatar:avatarImage.url,
+                avatarPublicId: avatarImage.public_id
             }
         },{new:true}
     ).select("-password")
@@ -282,7 +285,7 @@ const updateAvatarImage = asyncHandler(async(req,res) => {
     if(!user){
         throw new ApiError(400,"New Image not updated")
     }
-    oldImageToBeDeleted(oldAvatar)
+    await oldImageToBeDeleted(oldAvatarPublicId)
 
     return res
     .status(200)

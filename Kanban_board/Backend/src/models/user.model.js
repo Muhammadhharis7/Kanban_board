@@ -5,7 +5,9 @@ const userSchema = new Schema({
     userName:{
         type:String,
         required:true,
-        unique:true
+        unique:true,
+        lowercase: true,
+        trim: true,
     },
     fullName:{
         type:String,
@@ -27,6 +29,10 @@ const userSchema = new Schema({
         type:String,
         required:true
     },
+    avatarPublicId:{
+        type: String, // Cloudinary public_id, needed for deletion later
+        required: true,
+    },    
     refreshToken:{
         type:String
     }
