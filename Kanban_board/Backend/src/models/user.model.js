@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose"
 import jwt from "jsonwebtoken"
+import bcrypt from "bcryptjs"
 
 const userSchema = new Schema({
     userName:{
@@ -31,7 +32,6 @@ const userSchema = new Schema({
     },
     avatarPublicId:{
         type: String, // Cloudinary public_id, needed for deletion later
-        required: true,
     },    
     refreshToken:{
         type:String
@@ -44,7 +44,7 @@ userSchema.pre("save", async function (next){
     if(!this.isModified("password"))return next
     
     this.password = await bcrypt.hash(this.password,10)
-    next()
+    next
 })
 
 
@@ -72,7 +72,7 @@ userSchema.methods.generateAccessToken = function (){
         userName:this.userName,
         fullName:this.fullName
         },
-        process.env.ACCESS_TOKEN_SECRET,
+        process.env.ACCESS_TOKEN,
         {
             // Expiry object that we wrote in the .env file
             expiresIn:process.env.ACCESS_TOKEN_EXPIRY
@@ -88,7 +88,7 @@ userSchema.methods.generateRefreshToken = function (){
         _id:this._id,
         // in this information is less because it is refreshed again and again
         },
-        process.env.REFRESH_TOKEN_SECRET,
+        process.env.REFRESH_TOKEN,
         {
             // Expiry object that we wrote in the .env file
             expiresIn:process.env.REFRESH_TOKEN_EXPIRY

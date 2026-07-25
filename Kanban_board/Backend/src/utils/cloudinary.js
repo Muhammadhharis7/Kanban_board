@@ -4,11 +4,22 @@ import {v2 as cloudinary} from "cloudinary"
 
 (async function(){
     cloudinary.config({
-        cloud_name:process.env.CLOUD_NAME,
+        cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
         api_key:process.env.CLOUDINARY_API_KEY,
         api_secret:process.env.CLOUDINARY_API_SECRET
     })
 })();
+console.log("Cloudinary config check:", {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET ? "loaded (hidden)" : "MISSING"
+})
+
+console.log("Cloudinary config check:", {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 const imageToBeUploadedToCloudinary = (async(localFilePath) => {
     try {
@@ -31,8 +42,12 @@ const imageToBeUploadedToCloudinary = (async(localFilePath) => {
             public_id:response.public_id
         }
         } catch (error) {
-            fs.unlinkSync(localFilePath)
-            throw new ApiError(500,"Something went wrong")       
+            console.error("Cloudinary upload error:", error)
+            // fs.unlinkSync(localFilePath)
+            if (localFilePath && fs.existsSync(localFilePath)) {
+                fs.unlinkSync(localFilePath)
+            }
+            throw new ApiError(500,"Something went wrong",error.message)       
         }
 })
 

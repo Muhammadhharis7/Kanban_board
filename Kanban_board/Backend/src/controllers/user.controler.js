@@ -3,7 +3,7 @@ import { User } from "../models/user.model.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {ApiError} from "../utils/ApiError.js"
 import { checkRequiredFields, validateEmail, validatePassword } from "../validator/user.validator.js"
-
+import jwt from "jsonwebtoken"
 import { imageToBeUploadedToCloudinary } from "../utils/cloudinary.js"
 import { oldImageToBeDeleted } from "../utils/oldImage.js"
 
@@ -34,9 +34,9 @@ const generateAccessAndRefreshToken = async(userId) => {
 
 const registerUser = asyncHandler(async(req,res) => {
     const {userName,email,password,refreshToken,fullName} = req.body
-
+    console.log("req.body:", req.body)
     // call each validator seperately
-    checkRequiredFields(userName,email,password,fullName)
+    checkRequiredFields([userName,email,password,fullName])
     // Email verification
     validateEmail(email)
     // Password Strength
@@ -85,16 +85,18 @@ const registerUser = asyncHandler(async(req,res) => {
 
     return res
     .status(201)
-    .json(new ApiResponse(201,user,"User is created successfully"))
+    .json(new ApiResponse(201,createdUser,"User is created successfully"))
 })
 
-const loginUser = asyncHandler(async(req,res) => {
+const loginUser = asyncHandler(async(req,res) => { 
     const {userName,email,password} = req.body
 
     if(!(userName || email)){
         throw new ApiError(400,"User name or email is required")
     }
-    validateEmail(email)
+    if(email){
+        validateEmail(email)
+    }
 
     
 

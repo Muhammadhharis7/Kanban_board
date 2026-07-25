@@ -9,7 +9,7 @@
 //   });
   
 //   const upload = multer({ storage: storage });
-
+import multer from "multer";
 import path from "path"; // ⚠️ you're using path.extname but haven't imported it
 
 const storage = multer.diskStorage({
