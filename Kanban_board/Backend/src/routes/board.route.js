@@ -1,21 +1,14 @@
 import {Router} from "express"
 import {createBoard, deleteBoard, getAllBoards, getOneBoard, updateBoard} from "../controllers/board.controller.js"
+import {verifyJWT} from  "../middlewares/auth.middleware.js"
 
 const router = Router()
 
 // Create board
-router.route("/").post(createBoard).get(getAllBoards)
-
-// Get  all boards
-// router.route("/").get(getAllBoards)
+router.route("/").post(verifyJWT,createBoard).get(verifyJWT,getAllBoards)
 
 // Update board
-router.route("/:boardId").get(getOneBoard).patch(updateBoard).delete(deleteBoard)
+router.route("/:boardId").get(verifyJWT,getOneBoard).patch(verifyJWT,updateBoard).delete(verifyJWT,deleteBoard)
 
-// Get one board
-// router.route("/:boardId").put(getOneBoard)
-
-// Delete board
-// router.route("/:boardId").delete(deleteBoard)
 
 export default router
