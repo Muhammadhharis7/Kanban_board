@@ -42,16 +42,18 @@ const registerUser = asyncHandler(async(req,res) => {
     // Password Strength
     validatePassword(password)
 
+    const normalizedUserName = userName.toLowerCase()
+
     // Check if the user already existed 
     const existingUser = await User.findOne({
         $or:[{email},{userName}]
     })
 
     if(existingUser){
-       if(existingUser.userName === userName){
+       if(existingUser.userName === normalizedUserName){
         throw new ApiError(409,"Username already taken")
        }
-       if(existingUser.email === email){
+       if(existingUser.email === normalizedUserName){
         throw new ApiError(409,"Email already taken")
        } 
     }
@@ -69,7 +71,7 @@ const registerUser = asyncHandler(async(req,res) => {
     }
 
     const user = await User.create({
-        userName: userName.toLowerCase(),
+        userName: normalizedUserName,
         email,
         fullName,
         password,
