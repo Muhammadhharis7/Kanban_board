@@ -224,7 +224,7 @@ function Dashboard() {
             setError(message);
         }
     };
- 
+// from 768 to 842 break
     return (
         <div className="min-h-screen bg-zinc-900 text-white p-8">
             <div className="max-w-4xl mx-auto">
@@ -232,7 +232,7 @@ function Dashboard() {
                     <h1 className="text-2xl font-bold">Your Boards</h1>
                     <button
                         onClick={handleLogout}
-                        className="text-sm text-zinc-400 hover:text-white underline"
+                        className="text-sm text-white-100 hover:text-white underline bg-red-600 px-1 py-1 rounded"
                     >
                         Log out
                     </button>
