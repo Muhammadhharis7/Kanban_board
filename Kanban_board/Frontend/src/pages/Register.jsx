@@ -267,13 +267,13 @@ function Register() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
             <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
-                <button
+                {/* <button
                     type="button"
                     onClick={() => navigate("/login")}
                     className="mb-4 text-sm text-gray-500 hover:text-gray-700"
                 >
                     ← Back
-                </button>
+                </button> */}
                 <h1 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
                     Create your account
                 </h1>
