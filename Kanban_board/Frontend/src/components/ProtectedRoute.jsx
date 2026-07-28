@@ -8,7 +8,7 @@ function ProtectedRoute({ children }) {
 
     useEffect(() => {
         api
-            .get("/users/current-user") // adjust to whatever your "who am I" route is
+            .get("/users/get-current-user") // adjust to whatever your "who am I" route is
             .then(() => setAuthenticated(true))
             .catch(() => setAuthenticated(false))
             .finally(() => setChecking(false));
