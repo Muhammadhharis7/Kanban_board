@@ -4,10 +4,31 @@ import cookieParser from "cookie-parser"
 
 const app = express()
 // Middleware setup
+// app.use(cors({
+//     origin:process.env.CORS_ORIGIN,
+//     credentials:true
+// }))
+
+
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://kanbanboard-five-flame.vercel.app",
+];
+
 app.use(cors({
-    origin:process.env.CORS_ORIGIN,
-    credentials:true
-}))
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+
+
+
 // Allows server to understands the incoming requests with a JSON body
 app.use(express.json({limit:"16kb"})) 
 
